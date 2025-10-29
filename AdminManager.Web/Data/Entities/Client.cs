@@ -2,7 +2,7 @@
 
 namespace AdminManager.Web.Data.Entities
 {
-    public class User
+    public class Client
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
@@ -23,15 +23,5 @@ namespace AdminManager.Web.Data.Entities
         [Required(ErrorMessage = "El telefono es obligatorio")]
         [StringLength(20, ErrorMessage = "El telefono solo puede contener 20 caracteres maximo")]
         public string Phone { get; set; } = String.Empty;
-
-        public User(string name, string email, string password, string phone)
-        {
-            Name = name;
-            Email = email;
-            Password = password;
-            Phone = phone;
-        }
-
-        public User() { }
     }
 }
