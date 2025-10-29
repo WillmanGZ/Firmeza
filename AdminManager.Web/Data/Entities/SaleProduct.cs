@@ -2,14 +2,14 @@
 
 namespace AdminManager.Web.Data.Entities
 {
-    public class SellProduct
+    public class SaleProduct
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
-        public Guid SellId { get; set; }
-        public Sell Sell { get; set; }
+        public Guid SaleId { get; set; }
+        public Sale Sale { get; set; }
 
         [Required]
         public Guid ProductId { get; set; }

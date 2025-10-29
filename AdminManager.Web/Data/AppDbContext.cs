@@ -1,15 +1,14 @@
 ﻿using AdminManager.Web.Data.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace AdminManager.Web.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext
     {
-        public DbSet<Administrator> Administrators { get; set; }
-        public DbSet<Client> Clientes { get; set; }
         public DbSet<Product> Products { get; set; }
-        public DbSet<Sell> Sells { get; set; }
-        public DbSet<SellProduct> SellProducts { get; set; }
+        public DbSet<Sale> Sales { get; set; }
+        public DbSet<SaleProduct> SaleProducts { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
     }

@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace AdminManager.Web.Data.Entities
 {
-    public class Sell
+    public class Sale
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
@@ -11,9 +12,9 @@ namespace AdminManager.Web.Data.Entities
         public DateTime Date { get; set; } = DateTime.Now;
 
         [Required(ErrorMessage = "El Id del cliente es obligatorio")]
-        public Guid ClientId { get; set; }
-        public Client Client { get; set; }
+        public string ClientId { get; set; }
+        public IdentityUser Client { get; set; }
 
-        public ICollection<SellProduct> SellProducts { get; set; } = new List<SellProduct>();
+        public ICollection<SaleProduct> SaleProducts { get; set; } = new List<SaleProduct>();
     }
 }
