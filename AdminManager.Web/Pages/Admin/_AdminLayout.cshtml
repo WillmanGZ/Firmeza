@@ -1,0 +1,61 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Panel Administrativo | Firmeza</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+
+<body class="bg-light">
+    <div class="container-fluid min-vh-100">
+        <div class="row flex-nowrap">
+
+            <aside class="col-auto col-md-3 col-lg-2 bg-dark text-white min-vh-100 d-flex flex-column p-3">
+                <h4 class="text-center mb-4">Firmeza</h4>
+
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item">
+                        <a asp-page="/Admin/Dashboard" class="nav-link @(Context.Request.Path.Value?.Contains("Dashboard") == true ? "active bg-primary text-white" : "text-white")">
+                            General
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-page="/Admin/Products" class="nav-link @(Context.Request.Path.Value?.Contains("Products") == true ? "active bg-primary text-white" : "text-white")">
+                            Productos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-page="/Admin/Clients" class="nav-link @(Context.Request.Path.Value?.Contains("Clients") == true ? "active bg-primary text-white" : "text-white")">
+                            Clientes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-page="/Admin/Sales" class="nav-link @(Context.Request.Path.Value?.Contains("Sales") == true ? "active bg-primary text-white" : "text-white")">
+                            Ventas
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="mt-auto">
+                    <form method="post" asp-area="Identity" asp-page="/Account/Logout">
+                        <button type="submit" class="btn btn-danger w-100">
+                            Cerrar sesión
+                        </button>
+                    </form>
+                </div>
+            </aside>
+
+            <main class="col py-4">
+                <div class="container">
+                    @RenderBody()
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+﻿@page
+@model AdminManager.Web.Pages.Admin.SalesModel
+@{
+    Layout = "_AdminLayout";
+}
+
+<h2>Ventas</h2>
+<p>Total: @Model.TotalSales</p>
+
+<table class="table table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Productos</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var sale in Model.Sales)
+        {
+            <tr>
+                <td>@sale.Date.ToShortDateString()</td>
+                <td>@sale.ClientName</td>
+                <td>@sale.ProductCount</td>
+                <td>$@sale.Total</td>
+            </tr>
+        }
+    </tbody>
+</table>

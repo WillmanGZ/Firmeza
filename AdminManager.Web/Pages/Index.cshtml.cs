@@ -12,9 +12,14 @@ namespace AdminManager.Web.Pages
             _logger = logger;
         }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                return RedirectToPage("/Admin/Dashboard");
+            }
 
+            return Page();
         }
     }
 }

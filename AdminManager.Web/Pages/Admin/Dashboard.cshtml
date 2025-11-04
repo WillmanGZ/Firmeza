@@ -1,0 +1,35 @@
+﻿@page
+@model AdminManager.Web.Pages.Admin.DashboardModel
+@{
+    Layout = "_AdminLayout";
+}
+
+<h2 class="mb-4">Resumen general</h2>
+
+<div class="row text-center">
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Productos</h5>
+                <p class="display-6">@Model.TotalProducts</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Clientes</h5>
+                <p class="display-6">@Model.TotalClients</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Ventas</h5>
+                <p class="display-6">@Model.TotalSales</p>
+            </div>
+        </div>
+    </div>
+</div>
+
