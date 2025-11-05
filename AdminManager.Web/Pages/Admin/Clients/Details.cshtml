@@ -1,0 +1,28 @@
+﻿@page "{id}"
+@model AdminManager.Web.Pages.Admin.Clients.DetailsModel
+@{
+    Layout = "_AdminLayout";
+}
+
+<h3 class="mb-4">Detalles del cliente</h3>
+
+<div class="card p-3 shadow-sm">
+    <dl class="row">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">@Model.Client.Id</dd>
+
+        <dt class="col-sm-3">Correo</dt>
+        <dd class="col-sm-9">@Model.Client.Email</dd>
+
+        <dt class="col-sm-3">Nombre de usuario</dt>
+        <dd class="col-sm-9">@Model.Client.UserName</dd>
+
+        <dt class="col-sm-3">Teléfono</dt>
+        <dd class="col-sm-9">@Model.Client.PhoneNumber</dd>
+    </dl>
+
+    <div>
+        <a asp-page="./Edit" asp-route-id="@Model.Client.Id" class="btn btn-success me-2">Editar</a>
+        <a asp-page="./Index" class="btn btn-secondary">Volver</a>
+    </div>
+</div>

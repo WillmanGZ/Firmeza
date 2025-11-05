@@ -25,12 +25,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a asp-page="/Admin/Products" class="nav-link @(Context.Request.Path.Value?.Contains("Products") == true ? "active bg-primary text-white" : "text-white")">
+                        <a href="/Admin/Products" class="nav-link @(Context.Request.Path.Value?.Contains("Products") == true ? "active bg-primary text-white" : "text-white")">
                             Productos
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a asp-page="/Admin/Clients" class="nav-link @(Context.Request.Path.Value?.Contains("Clients") == true ? "active bg-primary text-white" : "text-white")">
+                        <a href="/Admin/Clients" class="nav-link @(Context.Request.Path.Value?.Contains("Clients") == true ? "active bg-primary text-white" : "text-white")">
                             Clientes
                         </a>
                     </li>
@@ -57,5 +57,6 @@
             </main>
         </div>
     </div>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

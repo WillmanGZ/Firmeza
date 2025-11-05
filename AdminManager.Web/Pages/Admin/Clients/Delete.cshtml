@@ -1,0 +1,29 @@
+﻿@page "{id}"
+@model AdminManager.Web.Pages.Admin.Clients.DeleteModel
+@{
+    Layout = "_AdminLayout";
+}
+
+<h3 class="mb-4 text-danger">Eliminar cliente</h3>
+
+<div class="alert alert-warning">
+    <p>¿Seguro que deseas eliminar este cliente?</p>
+</div>
+
+<div class="card p-3 mb-3">
+    <dl class="row">
+        <dt class="col-sm-3">Correo</dt>
+        <dd class="col-sm-9">@Model.Client.Email</dd>
+
+        <dt class="col-sm-3">Nombre de usuario</dt>
+        <dd class="col-sm-9">@Model.Client.UserName</dd>
+
+        <dt class="col-sm-3">Teléfono</dt>
+        <dd class="col-sm-9">@Model.Client.PhoneNumber</dd>
+    </dl>
+</div>
+
+<form method="post">
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a asp-page="./Index" class="btn btn-secondary">Cancelar</a>
+</form>

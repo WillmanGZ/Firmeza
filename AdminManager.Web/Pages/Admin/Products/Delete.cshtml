@@ -1,0 +1,32 @@
+﻿@page "{id}"
+@model AdminManager.Web.Pages.Admin.Products.DeleteModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Eliminar producto";
+}
+
+<h3 class="mb-4 text-danger">Eliminar producto</h3>
+
+<div class="alert alert-warning">
+    <p>¿Seguro que deseas eliminar este producto?</p>
+</div>
+
+<div class="card p-3 mb-3">
+    <dl class="row">
+        <dt class="col-sm-3">Nombre</dt>
+        <dd class="col-sm-9">@Model.Product.Name</dd>
+
+        <dt class="col-sm-3">Descripción</dt>
+        <dd class="col-sm-9">@Model.Product.Description</dd>
+
+        <dt class="col-sm-3">Precio</dt>
+        <dd class="col-sm-9">$@Model.Product.Price</dd>
+    </dl>
+</div>
+
+<form method="post">
+    <input type="hidden" asp-for="Product.Id" />
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a asp-page="./Index" class="btn btn-secondary">Cancelar</a>
+</form>
+

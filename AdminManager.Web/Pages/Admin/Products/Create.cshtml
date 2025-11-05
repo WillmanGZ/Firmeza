@@ -1,0 +1,38 @@
+﻿@page
+@model AdminManager.Web.Pages.Admin.Products.CreateModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Nuevo producto";
+}
+
+<h3 class="mb-4">Registrar nuevo producto</h3>
+
+<form method="post" class="card p-3 shadow-sm">
+    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+    <div class="mb-3">
+        <label asp-for="Product.Name" class="form-label">Nombre</label>
+        <input asp-for="Product.Name" class="form-control" />
+        <span asp-validation-for="Product.Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Product.Description" class="form-label">Descripción</label>
+        <input asp-for="Product.Description" class="form-control" />
+        <span asp-validation-for="Product.Description" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Product.Price" class="form-label">Precio</label>
+        <input asp-for="Product.Price" class="form-control" />
+        <span asp-validation-for="Product.Price" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Crear</button>
+    <a asp-page="./Index" class="btn btn-secondary mt-2">Cancelar</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
