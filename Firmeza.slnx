@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="AdminManager.Web/AdminManager.Web.csproj" />
+  <Project Path="Firmeza.API/Firmeza.API.csproj" Id="cf291659-d9a8-4c90-96cf-82e33a80ed50" />
 </Solution>
