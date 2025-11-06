@@ -19,7 +19,7 @@ namespace Firmeza.API.Services
 
         public async Task<Product?> GetByIdAsync(Guid id)
         {
-            if (id == null) return null;
+            if (id == Guid.Empty) return null;
             return await _repository.GetByIdAsync(id);
         }
 
