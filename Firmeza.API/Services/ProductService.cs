@@ -54,10 +54,22 @@ namespace Firmeza.API.Services
             };
         }
 
-        public async Task<ApiResponse<object>> CreateAsync(ProductCreateDto dto)
+        public async Task<ApiResponse<object>> CreateAsync(ProductCreateDto request)
         {
-            var product = _mapper.Map<Product>(dto);
+            if (string.IsNullOrWhiteSpace(request.Name) ||
+                string.IsNullOrWhiteSpace(request.Description) ||
+                request.Price <= 0)
+            {
+                return new ApiResponse<object>
+                {
+                    Code = 400,
+                    Success = false,
+                    Message = "Todos los campos son obligatorios y el precio debe ser mayor a 0.",
+                    Payload = null
+                };
+            }
 
+            var product = _mapper.Map<Product>(request);
             await _repository.AddAsync(product);
 
             return new ApiResponse<object>
@@ -69,20 +81,47 @@ namespace Firmeza.API.Services
             };
         }
 
-        public async Task<ApiResponse<object>> UpdateAsync(Guid id, ProductUpdateDto dto)
+        public async Task<ApiResponse<object>> UpdateAsync(Guid id, ProductUpdateDto request)
         {
-            var existing = await _repository.GetByIdAsync(id);
+            if (id == Guid.Empty)
+            {
+                return new ApiResponse<object>
+                {
+                    Code = 400,
+                    Success = false,
+                    Message = "El ID del producto es inválido.",
+                    Payload = null
+                };
+            }
 
+            var existing = await _repository.GetByIdAsync(id);
             if (existing == null)
+            {
                 return new ApiResponse<object>
                 {
                     Code = 404,
                     Success = false,
-                    Message = "Producto no encontrado",
+                    Message = "El producto no existe.",
                     Payload = null
                 };
+            }
 
-            _mapper.Map(dto, existing);
+            if (string.IsNullOrWhiteSpace(request.Name) ||
+                string.IsNullOrWhiteSpace(request.Description) ||
+                request.Price <= 0)
+            {
+                return new ApiResponse<object>
+                {
+                    Code = 400,
+                    Success = false,
+                    Message = "Todos los campos son obligatorios y el precio debe ser mayor a 0.",
+                    Payload = null
+                };
+            }
+
+            existing.Name = request.Name;
+            existing.Description = request.Description;
+            existing.Price = request.Price;
 
             await _repository.UpdateAsync(existing);
 
@@ -91,9 +130,10 @@ namespace Firmeza.API.Services
                 Code = 200,
                 Success = true,
                 Message = "Producto actualizado correctamente",
-                Payload = null
+                Payload = _mapper.Map<ProductResponseDto>(existing)
             };
         }
+
 
         public async Task<ApiResponse<object>> DeleteAsync(Guid id)
         {
