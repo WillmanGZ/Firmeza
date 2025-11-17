@@ -1,99 +1,122 @@
-﻿using Firmeza.API.Data.Entities;
+﻿using AutoMapper;
+using Firmeza.API.Data.Entities;
+using Firmeza.API.DTOs.Product;
 using Firmeza.API.Interfaces;
+using Firmeza.API.Responses;
 
 namespace Firmeza.API.Services
 {
     public class ProductService : IProductService
     {
         private readonly IProductRepository _repository;
+        private readonly IMapper _mapper;
 
-        public ProductService(IProductRepository repository)
+        public ProductService(IProductRepository repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
-        public async Task<List<Product>> GetAllAsync()
+        public async Task<ApiResponse<object>> GetAllAsync()
         {
-            return await _repository.GetAllAsync();
+            var products = await _repository.GetAllAsync();
+
+            var dto = _mapper.Map<List<ProductResponseDto>>(products);
+
+            return new ApiResponse<object>
+            {
+                Code = 200,
+                Success = true,
+                Message = "Productos obtenidos correctamente",
+                Payload = dto
+            };
         }
 
-        public async Task<Product?> GetByIdAsync(Guid id)
+        public async Task<ApiResponse<object>> GetByIdAsync(Guid id)
         {
-            if (id == Guid.Empty) return null;
-            return await _repository.GetByIdAsync(id);
+            var product = await _repository.GetByIdAsync(id);
+
+            if (product == null)
+                return new ApiResponse<object>
+                {
+                    Code = 404,
+                    Success = false,
+                    Message = "Producto no encontrado",
+                    Payload = null
+                };
+
+            return new ApiResponse<object>
+            {
+                Code = 200,
+                Success = true,
+                Message = "Producto encontrado",
+                Payload = _mapper.Map<ProductResponseDto>(product)
+            };
         }
 
-        public async Task<bool> AddAsync(Product product)
+        public async Task<ApiResponse<object>> CreateAsync(ProductCreateDto dto)
         {
-            try
+            var product = _mapper.Map<Product>(dto);
+
+            await _repository.AddAsync(product);
+
+            return new ApiResponse<object>
             {
-                if (product == null)
-                    throw new ArgumentException("El producto no puede ser nulo.");
-
-                if (string.IsNullOrWhiteSpace(product.Name))
-                    throw new ArgumentException("El nombre del producto es obligatorio.");
-
-                if (string.IsNullOrWhiteSpace(product.Description))
-                    throw new ArgumentException("La descripción del producto es obligatoria.");
-
-                if (product.Price < 0)
-                    throw new ArgumentException("El precio no puede ser negativo.");
-
-                await _repository.AddAsync(product);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+                Code = 201,
+                Success = true,
+                Message = "Producto creado correctamente",
+                Payload = _mapper.Map<ProductResponseDto>(product)
+            };
         }
 
-        public async Task<bool> UpdateAsync(Product product)
+        public async Task<ApiResponse<object>> UpdateAsync(Guid id, ProductUpdateDto dto)
         {
-            try
+            var existing = await _repository.GetByIdAsync(id);
+
+            if (existing == null)
+                return new ApiResponse<object>
+                {
+                    Code = 404,
+                    Success = false,
+                    Message = "Producto no encontrado",
+                    Payload = null
+                };
+
+            _mapper.Map(dto, existing);
+
+            await _repository.UpdateAsync(existing);
+
+            return new ApiResponse<object>
             {
-                if (product == null)
-                    throw new ArgumentException("El producto no puede ser nulo.");
-
-                var existing = await _repository.GetByIdAsync(product.Id);
-
-                if (existing == null)
-                    throw new ArgumentException("El producto no existe.");
-
-                if (string.IsNullOrWhiteSpace(product.Name))
-                    throw new ArgumentException("El nombre del producto es obligatorio.");
-
-                if (string.IsNullOrWhiteSpace(product.Description))
-                    throw new ArgumentException("La descripción del producto es obligatoria.");
-
-                if (product.Price < 0)
-                    throw new ArgumentException("El precio no puede ser negativo.");
-
-                await _repository.UpdateAsync(product);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+                Code = 200,
+                Success = true,
+                Message = "Producto actualizado correctamente",
+                Payload = null
+            };
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<ApiResponse<object>> DeleteAsync(Guid id)
         {
-            try
-            {
-                var existing = await _repository.GetByIdAsync(id);
+            var existing = await _repository.GetByIdAsync(id);
 
-                if (existing == null)
-                    throw new ArgumentException("El producto no existe.");
+            if (existing == null)
+                return new ApiResponse<object>
+                {
+                    Code = 404,
+                    Success = false,
+                    Message = "Producto no encontrado",
+                    Payload = null
+                };
 
-                await _repository.DeleteAsync(id);
-                return true;
-            }
-            catch
+            await _repository.DeleteAsync(id);
+
+            return new ApiResponse<object>
             {
-                return false;
-            }
+                Code = 200,
+                Success = true,
+                Message = "Producto eliminado correctamente",
+                Payload = null
+            };
         }
     }
 }

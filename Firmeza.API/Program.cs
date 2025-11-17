@@ -27,13 +27,21 @@ builder.Services.AddScoped<ISaleProductRepository, SaleProductRepository>();
 
 builder.Services.AddScoped<IProductService, ProductService>();
 
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddScoped<IJwtService, JwtService>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
+
+app.UseSwagger();
+
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

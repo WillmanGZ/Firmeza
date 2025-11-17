@@ -1,61 +1,32 @@
 ﻿using Firmeza.API.DTOs;
-using Microsoft.AspNetCore.Identity;
+using Firmeza.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace Firmeza.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IAuthService _authService;
 
-        public AuthController(UserManager<IdentityUser> userManager)
+        public AuthController(IAuthService authService)
         {
-            _userManager = userManager;
+            _authService = authService;
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO request)
         {
-            var user = await _userManager.FindByEmailAsync(request.Email);
-
-            if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password))
-                return Unauthorized("Credenciales inválidas.");
-
-            var token = GenerateJwtToken(user);
-            return Ok(new { token });
+            var response = await _authService.LoginAsync(request);
+            return StatusCode(response.Code, response);
         }
 
-        private string GenerateJwtToken(IdentityUser user)
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterDTO request)
         {
-            var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
-            var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
-            var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
-
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email ?? ""),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id)
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: jwtIssuer,
-                audience: jwtAudience,
-                claims: claims,
-                expires: DateTime.UtcNow.AddHours(1),
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var response = await _authService.RegisterAsync(request);
+            return StatusCode(response.Code, response);
         }
     }
 }
