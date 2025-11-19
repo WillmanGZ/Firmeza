@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Firmeza.API.Data.Entities;
+using Firmeza.API.DTOs.Sale;
 using Firmeza.API.DTOs.SaleProduct;
 
 namespace Firmeza.API.Mappings
@@ -16,7 +17,7 @@ namespace Firmeza.API.Mappings
                 .ForMember(dest => dest.SaleProducts,
                     opt => opt.MapFrom(src => src.Products));
 
-            CreateMap<SaleProductDto, SaleProduct>();
+            CreateMap<SaleProductResponseDto, SaleProduct>();
             CreateMap<SaleProduct, SaleProductResponseDto>();
 
             CreateMap<Sale, SaleResponseDto>()

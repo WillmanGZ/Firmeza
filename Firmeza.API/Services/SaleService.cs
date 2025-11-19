@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Firmeza.API.Data.Entities;
-using Firmeza.API.DTOs.SaleProduct;
+using Firmeza.API.DTOs.Sale;
 using Firmeza.API.Interfaces;
 using Firmeza.API.Responses;
 using Microsoft.AspNetCore.Identity;
@@ -74,7 +74,6 @@ namespace Firmeza.API.Services
 
         public async Task<ApiResponse<object>> CreateAsync(SaleCreateDto request)
         {
-            // Validación básica estilo Auth/Product (sin validar SaleProducts aquí)
             if (request == null || string.IsNullOrWhiteSpace(request.ClientId))
             {
                 return new ApiResponse<object>
@@ -160,11 +159,9 @@ namespace Firmeza.API.Services
                 };
             }
 
-            // Mapear cambios relevantes a la entidad existente (sin tocar SaleProducts)
-            existing.Date = DateTime.Now; // opcional: actualizar fecha o mantener la original según negocio
+            existing.Date = DateTime.Now;
             existing.ClientId = request.ClientId;
             existing.Client = client;
-            // NOTA: no reasignamos existing.SaleProducts aquí (se gestionan por SaleProductController)
 
             await _repository.UpdateAsync(existing);
 

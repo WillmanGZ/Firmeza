@@ -1,13 +1,15 @@
 ﻿using Firmeza.API.Data.Entities;
+using Firmeza.API.Responses;
+using Firmeza.API.DTOs.SaleProduct;
 
 namespace Firmeza.API.Interfaces
 {
     public interface ISaleProductService
     {
-        Task<List<SaleProduct>> GetAllAsync();
-        Task<SaleProduct?> GetByIdAsync(Guid id);
-        Task<bool> AddAsync(SaleProduct saleProduct);
-        Task<bool> UpdateAsync(SaleProduct saleProduct);
-        Task<bool> DeleteAsync(Guid id);
+        Task<ApiResponse<List<SaleProduct>>> GetAllAsync();
+        Task<ApiResponse<SaleProduct?>> GetByIdAsync(Guid id);
+        Task<ApiResponse<SaleProduct?>> CreateAsync(SaleProductCreateDto request);
+        Task<ApiResponse<SaleProduct?>> UpdateAsync(Guid id, SaleProductUpdateDto request);
+        Task<ApiResponse<string>> DeleteAsync(Guid id);
     }
 }

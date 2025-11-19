@@ -1,8 +1,7 @@
 ﻿namespace Firmeza.API.DTOs.SaleProduct
 {
-    public class SaleProductResponseDto
+    public class SaleProductCreateDto
     {
-        public Guid Id { get; set; }
         public Guid SaleId { get; set; }
         public Guid ProductId { get; set; }
         public int Quantity { get; set; }

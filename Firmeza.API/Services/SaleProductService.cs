@@ -1,5 +1,8 @@
-﻿using Firmeza.API.Data.Entities;
+﻿using AutoMapper;
+using Firmeza.API.Data.Entities;
+using Firmeza.API.DTOs.SaleProduct;
 using Firmeza.API.Interfaces;
+using Firmeza.API.Responses;
 
 namespace Firmeza.API.Services
 {
@@ -8,115 +11,234 @@ namespace Firmeza.API.Services
         private readonly ISaleProductRepository _repository;
         private readonly IProductRepository _productRepository;
         private readonly ISaleRepository _saleRepository;
+        private readonly IMapper _mapper;
 
         public SaleProductService(
             ISaleProductRepository repository,
             IProductRepository productRepository,
-            ISaleRepository saleRepository)
+            ISaleRepository saleRepository,
+            IMapper mapper)
         {
             _repository = repository;
             _productRepository = productRepository;
             _saleRepository = saleRepository;
+            _mapper = mapper;
         }
 
-        public async Task<List<SaleProduct>> GetAllAsync()
+        public async Task<ApiResponse<List<SaleProduct>>> GetAllAsync()
         {
-            return await _repository.GetAllAsync();
+            var list = await _repository.GetAllAsync();
+
+            return new ApiResponse<List<SaleProduct>>
+            {
+                Code = 200,
+                Success = true,
+                Message = "Lista obtenida correctamente",
+                Payload = list
+            };
         }
 
-        public async Task<SaleProduct?> GetByIdAsync(Guid id)
+        public async Task<ApiResponse<SaleProduct?>> GetByIdAsync(Guid id)
         {
             if (id == Guid.Empty)
-                return null;
+            {
+                return new ApiResponse<SaleProduct?>
+                {
+                    Code = 400,
+                    Success = false,
+                    Message = "El Id es inválido",
+                    Payload = null
+                };
+            }
 
-            return await _repository.GetByIdAsync(id);
+            var sp = await _repository.GetByIdAsync(id);
+
+            if (sp == null)
+            {
+                return new ApiResponse<SaleProduct?>
+                {
+                    Code = 404,
+                    Success = false,
+                    Message = "El SaleProduct no existe",
+                    Payload = null
+                };
+            }
+
+            return new ApiResponse<SaleProduct?>
+            {
+                Code = 200,
+                Success = true,
+                Message = "SaleProduct encontrado",
+                Payload = sp
+            };
         }
 
-        public async Task<bool> AddAsync(SaleProduct saleProduct)
+        public async Task<ApiResponse<SaleProduct?>> CreateAsync(SaleProductCreateDto request)
         {
-            try
+            if (request.SaleId == Guid.Empty ||
+                request.ProductId == Guid.Empty ||
+                request.Quantity <= 0 ||
+                request.UnitPrice <= 0)
             {
-                if (saleProduct == null)
-                    throw new ArgumentException("El producto de la venta no puede ser nulo.");
-
-                if (saleProduct.SaleId == Guid.Empty)
-                    throw new ArgumentException("El Id de la venta es obligatorio.");
-
-                if (saleProduct.ProductId == Guid.Empty)
-                    throw new ArgumentException("El Id del producto es obligatorio.");
-
-                if (saleProduct.Quantity <= 0)
-                    throw new ArgumentException("La cantidad debe ser mayor que cero.");
-
-                var sale = await _saleRepository.GetByIdAsync(saleProduct.SaleId);
-                if (sale == null)
-                    throw new ArgumentException("La venta no existe.");
-
-                var product = await _productRepository.GetByIdAsync(saleProduct.ProductId);
-                if (product == null)
-                    throw new ArgumentException("El producto no existe.");
-
-                await _repository.AddAsync(saleProduct);
-                return true;
+                return new ApiResponse<SaleProduct?>
+                {
+                    Code = 400,
+                    Success = false,
+                    Message = "Todos los campos son obligatorios y deben ser válidos.",
+                    Payload = null
+                };
             }
-            catch
+
+            var sale = await _saleRepository.GetByIdAsync(request.SaleId);
+            if (sale == null)
             {
-                return false;
+                return new ApiResponse<SaleProduct?>
+                {
+                    Code = 404,
+                    Success = false,
+                    Message = "La venta no existe",
+                    Payload = null
+                };
             }
+
+            var product = await _productRepository.GetByIdAsync(request.ProductId);
+            if (product == null)
+            {
+                return new ApiResponse<SaleProduct?>
+                {
+                    Code = 404,
+                    Success = false,
+                    Message = "El producto no existe",
+                    Payload = null
+                };
+            }
+
+            var saleProduct = _mapper.Map<SaleProduct>(request);
+            await _repository.AddAsync(saleProduct);
+
+            return new ApiResponse<SaleProduct?>
+            {
+                Code = 201,
+                Success = true,
+                Message = "SaleProduct creado correctamente",
+                Payload = saleProduct
+            };
         }
 
-        public async Task<bool> UpdateAsync(SaleProduct saleProduct)
+        public async Task<ApiResponse<SaleProduct?>> UpdateAsync(Guid id, SaleProductUpdateDto request)
         {
-            try
+            if (id == Guid.Empty)
             {
-                if (saleProduct == null)
-                    throw new ArgumentException("El producto de la venta no puede ser nulo.");
-
-                var existing = await _repository.GetByIdAsync(saleProduct.Id);
-                if (existing == null)
-                    throw new ArgumentException("El producto de la venta no existe.");
-
-                if (saleProduct.SaleId == Guid.Empty)
-                    throw new ArgumentException("El Id de la venta es obligatorio.");
-
-                if (saleProduct.ProductId == Guid.Empty)
-                    throw new ArgumentException("El Id del producto es obligatorio.");
-
-                if (saleProduct.Quantity <= 0)
-                    throw new ArgumentException("La cantidad debe ser mayor que cero.");
-
-                var sale = await _saleRepository.GetByIdAsync(saleProduct.SaleId);
-                if (sale == null)
-                    throw new ArgumentException("La venta no existe.");
-
-                var product = await _productRepository.GetByIdAsync(saleProduct.ProductId);
-                if (product == null)
-                    throw new ArgumentException("El producto no existe.");
-
-                await _repository.UpdateAsync(saleProduct);
-                return true;
+                return new ApiResponse<SaleProduct?>
+                {
+                    Code = 400,
+                    Success = false,
+                    Message = "El Id es inválido",
+                    Payload = null
+                };
             }
-            catch
+
+            var existing = await _repository.GetByIdAsync(id);
+            if (existing == null)
             {
-                return false;
+                return new ApiResponse<SaleProduct?>
+                {
+                    Code = 404,
+                    Success = false,
+                    Message = "El SaleProduct no existe",
+                    Payload = null
+                };
             }
+
+            if (request.SaleId == Guid.Empty ||
+                request.ProductId == Guid.Empty ||
+                request.Quantity <= 0 ||
+                request.UnitPrice <= 0)
+            {
+                return new ApiResponse<SaleProduct?>
+                {
+                    Code = 400,
+                    Success = false,
+                    Message = "Todos los campos son obligatorios y deben ser válidos.",
+                    Payload = null
+                };
+            }
+
+            var sale = await _saleRepository.GetByIdAsync(request.SaleId);
+            if (sale == null)
+            {
+                return new ApiResponse<SaleProduct?>
+                {
+                    Code = 404,
+                    Success = false,
+                    Message = "La venta no existe",
+                    Payload = null
+                };
+            }
+
+            var product = await _productRepository.GetByIdAsync(request.ProductId);
+            if (product == null)
+            {
+                return new ApiResponse<SaleProduct?>
+                {
+                    Code = 404,
+                    Success = false,
+                    Message = "El producto no existe",
+                    Payload = null
+                };
+            }
+
+            existing.SaleId = request.SaleId;
+            existing.ProductId = request.ProductId;
+            existing.Quantity = request.Quantity;
+            existing.UnitPrice = request.UnitPrice;
+
+            await _repository.UpdateAsync(existing);
+
+            return new ApiResponse<SaleProduct?>
+            {
+                Code = 200,
+                Success = true,
+                Message = "SaleProduct actualizado correctamente",
+                Payload = existing
+            };
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<ApiResponse<string>> DeleteAsync(Guid id)
         {
-            try
+            if (id == Guid.Empty)
             {
-                var existing = await _repository.GetByIdAsync(id);
-                if (existing == null)
-                    throw new ArgumentException("El producto de la venta no existe.");
+                return new ApiResponse<string>
+                {
+                    Code = 400,
+                    Success = false,
+                    Message = "El Id es inválido",
+                    Payload = null
+                };
+            }
 
-                await _repository.DeleteAsync(id);
-                return true;
-            }
-            catch
+            var existing = await _repository.GetByIdAsync(id);
+            if (existing == null)
             {
-                return false;
+                return new ApiResponse<string>
+                {
+                    Code = 404,
+                    Success = false,
+                    Message = "El SaleProduct no existe",
+                    Payload = null
+                };
             }
+
+            await _repository.DeleteAsync(id);
+
+            return new ApiResponse<string>
+            {
+                Code = 200,
+                Success = true,
+                Message = "SaleProduct eliminado correctamente",
+                Payload = "Deleted"
+            };
         }
     }
+
 }

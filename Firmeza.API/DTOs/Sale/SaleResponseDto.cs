@@ -1,4 +1,6 @@
-﻿namespace Firmeza.API.DTOs.SaleProduct
+﻿using Firmeza.API.DTOs.SaleProduct;
+
+namespace Firmeza.API.DTOs.Sale
 {
     public class SaleResponseDto
     {

@@ -1,5 +1,4 @@
-﻿using Firmeza.API.Data.Entities;
-using Firmeza.API.DTOs.SaleProduct;
+﻿using Firmeza.API.DTOs.Sale;
 using Firmeza.API.Responses;
 
 namespace Firmeza.API.Interfaces
