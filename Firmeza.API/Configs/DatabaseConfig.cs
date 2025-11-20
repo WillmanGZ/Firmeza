@@ -7,7 +7,6 @@ namespace Firmeza.API.Configs
     {
         public static IServiceCollection AddDatabase(this IServiceCollection services)
         {
-            DotNetEnv.Env.Load();
 
             var host = Environment.GetEnvironmentVariable("DB_HOST");
             var port = Environment.GetEnvironmentVariable("DB_PORT");

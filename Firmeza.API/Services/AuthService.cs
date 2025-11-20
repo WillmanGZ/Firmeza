@@ -11,13 +11,16 @@ namespace Firmeza.API.Services
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IJwtService _jwtService;
         private readonly IMapper _mapper;
+        private readonly IEmailService _emailService;
 
         public AuthService(
             UserManager<IdentityUser> userManager,
+            IEmailService emailService,
             IJwtService jwtService,
             IMapper mapper)
         {
             _userManager = userManager;
+            _emailService = emailService;
             _jwtService = jwtService;
             _mapper = mapper;
         }
@@ -100,6 +103,8 @@ namespace Firmeza.API.Services
                 };
 
             await _userManager.AddToRoleAsync(user, "Client");
+
+            _emailService.SendAccountCreated(user);
 
             return new ApiResponse<object>
             {

@@ -1,3 +1,4 @@
+using DotNetEnv;
 using Firmeza.API.Configs;
 using Firmeza.API.Data;
 using Firmeza.API.Interfaces;
@@ -6,6 +7,8 @@ using Firmeza.API.Services;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Env.Load();
 
 builder.Services.AddDatabase();
 
@@ -28,6 +31,8 @@ builder.Services.AddScoped<ISaleProductRepository, SaleProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddScoped<IJwtService, JwtService>();
 
