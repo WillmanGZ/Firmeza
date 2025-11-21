@@ -1,16 +1,22 @@
 using AdminManager.Web.Configs;
 using AdminManager.Web.Data;
 using AdminManager.Web.Data.Seeders;
+using AdminManager.Web.Services;
 using Microsoft.AspNetCore.Identity;
+using OfficeOpenXml;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDatabase();
+
+ExcelPackage.License.SetNonCommercialPersonal("FirmezaApp");
 
 // Use identity user system and role system
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>() // Using our dbContext
     .AddDefaultTokenProviders() // Using tokens for reset or confirmation
     .AddDefaultUI(); // Use razor pages
+
+builder.Services.AddScoped<ExcelImportService>();
 
 builder.Services.AddRazorPages();
 
