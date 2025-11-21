@@ -6,32 +6,23 @@ namespace AdminManager.Web.Pages.Excel
 {
     public class ImportModel : PageModel
     {
-        private readonly ExcelImportService _excelService;
+        private readonly ExcelImportService _excel;
 
-        public ImportModel(ExcelImportService excelService)
+        public ImportModel(ExcelImportService excel)
         {
-            _excelService = excelService;
+            _excel = excel;
         }
 
         [BindProperty]
         public IFormFile ExcelFile { get; set; }
 
-        public string? Message { get; set; }
-
-        public async Task<IActionResult> OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
-            if (ExcelFile == null)
-            {
-                Message = "Seleccione un archivo válido.";
-                return Page();
-            }
-
             using var stream = ExcelFile.OpenReadStream();
-            var ok = await _excelService.ImportAsync(stream);
+            var errors = await _excel.ImportAsync(stream);
 
-            Message = ok ? "Importación completada con éxito." : "Hubo un error importando el documento.";
-
-            return Page();
+            TempData["ImportErrors"] = string.Join("\n", errors);
+            return RedirectToPage("/Admin/Products/Index");
         }
     }
 }

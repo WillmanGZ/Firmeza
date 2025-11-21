@@ -10,107 +10,244 @@ namespace AdminManager.Web.Services
     {
         private readonly AppDbContext _db;
         private readonly UserManager<IdentityUser> _users;
+        private readonly RoleManager<IdentityRole> _roles;
 
-        public ExcelImportService(AppDbContext db, UserManager<IdentityUser> users)
+        public ExcelImportService(AppDbContext db, UserManager<IdentityUser> users, RoleManager<IdentityRole> roles)
         {
             _db = db;
             _users = users;
+            _roles = roles;
         }
 
-        public async Task<bool> ImportAsync(Stream stream)
+        public async Task<List<string>> ImportAsync(Stream stream)
         {
-            using var package = new ExcelPackage(stream);
+            var errors = new List<string>();
 
             try
             {
-                // PRODUCTS
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+                using var package = new ExcelPackage(stream);
+
+                var wsClients = package.Workbook.Worksheets["Clients"];
                 var wsProducts = package.Workbook.Worksheets["Products"];
-                if (wsProducts != null)
+                var wsSales = package.Workbook.Worksheets["Sales"];
+                var wsSaleProducts = package.Workbook.Worksheets["SaleProducts"];
+
+                var salesDict = new Dictionary<string, Sale>();
+
+                await using var trx = await _db.Database.BeginTransactionAsync();
+
+                // -------------------------------------------------------
+                // 1) CLIENTES
+                // -------------------------------------------------------
+                if (wsClients != null && wsClients.Dimension != null)
+                {
+                    for (int row = 2; row <= wsClients.Dimension.End.Row; row++)
+                    {
+                        var email = wsClients.Cells[row, 1].Text?.Trim();
+                        var username = wsClients.Cells[row, 2].Text?.Trim();
+                        var phone = wsClients.Cells[row, 3].Text?.Trim();
+                        var password = wsClients.Cells[row, 4].Text?.Trim();
+
+                        if (string.IsNullOrWhiteSpace(email))
+                            continue;
+
+                        var existing = await _users.FindByEmailAsync(email);
+                        if (existing != null)
+                            continue;
+
+                        var user = new IdentityUser
+                        {
+                            Email = email,
+                            UserName = string.IsNullOrWhiteSpace(username) ? email : username,
+                            PhoneNumber = phone
+                        };
+
+                        var pwd = string.IsNullOrWhiteSpace(password) ? "User123*" : password;
+
+                        var result = await _users.CreateAsync(user, pwd);
+                        if (!result.Succeeded)
+                        {
+                            errors.Add($"Error creando usuario {email}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                            continue;
+                        }
+
+                        if (!await _roles.RoleExistsAsync("Client"))
+                            await _roles.CreateAsync(new IdentityRole("Client"));
+
+                        await _users.AddToRoleAsync(user, "Client");
+                    }
+                }
+
+                // -------------------------------------------------------
+                // 2) PRODUCTOS
+                // -------------------------------------------------------
+                if (wsProducts != null && wsProducts.Dimension != null)
                 {
                     for (int row = 2; row <= wsProducts.Dimension.End.Row; row++)
                     {
-                        var name = wsProducts.Cells[row, 1].Text.Trim();
+                        var name = wsProducts.Cells[row, 1].Text?.Trim();
                         if (string.IsNullOrWhiteSpace(name)) continue;
 
-                        var p = new Product
+                        var desc = wsProducts.Cells[row, 2].Text?.Trim();
+                        var priceText = wsProducts.Cells[row, 3].Text?.Trim();
+
+                        if (!int.TryParse(priceText, out int price))
+                        {
+                            errors.Add($"Fila {row} en Products tiene Price inválido.");
+                            continue;
+                        }
+
+                        var exists = await _db.Products.FirstOrDefaultAsync(p => p.Name == name);
+                        if (exists != null)
+                            continue;
+
+                        _db.Products.Add(new Product
                         {
                             Name = name,
-                            Description = wsProducts.Cells[row, 2].Text.Trim(),
-                            Price = int.Parse(wsProducts.Cells[row, 3].Text.Trim())
-                        };
-
-                        _db.Products.Add(p);
+                            Description = desc ?? "",
+                            Price = price
+                        });
                     }
 
                     await _db.SaveChangesAsync();
                 }
 
-                // SALES
-                var wsSales = package.Workbook.Worksheets["Sales"];
-                List<Sale> importedSales = new();
-
-                if (wsSales != null)
+                // -------------------------------------------------------
+                // 3) SALES
+                // Key: date|email
+                // -------------------------------------------------------
+                if (wsSales != null && wsSales.Dimension != null)
                 {
                     for (int row = 2; row <= wsSales.Dimension.End.Row; row++)
                     {
-                        var email = wsSales.Cells[row, 2].Text.Trim();
+                        DateTime date;
+                        var rawDate = wsSales.Cells[row, 1].Value;
+
+                        if (rawDate is double d)
+                            date = DateTime.FromOADate(d);
+                        else if (!DateTime.TryParse(wsSales.Cells[row, 1].Text?.Trim(), out date))
+                        {
+                            errors.Add($"Fecha invalida en Sales fila {row}");
+                            continue;
+                        }
+
+                        var email = wsSales.Cells[row, 2].Text?.Trim();
                         if (string.IsNullOrWhiteSpace(email)) continue;
 
-                        var user = await _users.FindByEmailAsync(email);
-                        if (user == null) continue;
-
-                        var sale = new Sale
+                        var client = await _users.FindByEmailAsync(email);
+                        if (client == null)
                         {
-                            Date = DateTime.Parse(wsSales.Cells[row, 1].Text.Trim()),
-                            ClientId = user.Id
-                        };
+                            errors.Add($"Cliente no encontrado en Sales fila {row}: {email}");
+                            continue;
+                        }
 
-                        importedSales.Add(sale);
-                        _db.Sales.Add(sale);
+                        var key = $"{date:yyyy-MM-dd}|{email.ToLower()}";
+
+                        if (!salesDict.ContainsKey(key))
+                        {
+                            var sale = new Sale
+                            {
+                                Date = date,
+                                ClientId = client.Id
+                            };
+
+                            _db.Sales.Add(sale);
+                            await _db.SaveChangesAsync();
+
+                            salesDict[key] = sale;
+                        }
                     }
-
-                    await _db.SaveChangesAsync();
                 }
 
-                // SALEPRODUCTS
-                var wsSP = package.Workbook.Worksheets["SaleProducts"];
-                if (wsSP != null)
+                // -------------------------------------------------------
+                // 4) SALEPRODUCTS
+                // -------------------------------------------------------
+                if (wsSaleProducts != null && wsSaleProducts.Dimension != null)
                 {
-                    for (int row = 2; row <= wsSP.Dimension.End.Row; row++)
+                    for (int row = 2; row <= wsSaleProducts.Dimension.End.Row; row++)
                     {
-                        var saleIndex = int.Parse(wsSP.Cells[row, 1].Text.Trim());
-                        var productName = wsSP.Cells[row, 2].Text.Trim();
+                        DateTime date;
 
-                        var sale = importedSales.ElementAtOrDefault(saleIndex - 1);
-                        if (sale == null) continue;
+                        var rawDate = wsSaleProducts.Cells[row, 1].Value;
+                        if (rawDate is double d)
+                            date = DateTime.FromOADate(d);
+                        else if (!DateTime.TryParse(wsSaleProducts.Cells[row, 1].Text?.Trim(), out date))
+                        {
+                            errors.Add($"Fecha inválida en SaleProducts fila {row}");
+                            continue;
+                        }
+
+                        var email = wsSaleProducts.Cells[row, 2].Text?.Trim();
+                        var productName = wsSaleProducts.Cells[row, 3].Text?.Trim();
+                        var qtyText = wsSaleProducts.Cells[row, 4].Text?.Trim();
+                        var unitText = wsSaleProducts.Cells[row, 5].Text?.Trim();
+
+                        if (!int.TryParse(qtyText, out int qty))
+                        {
+                            errors.Add($"Cantidad inválida en SaleProducts fila {row}");
+                            continue;
+                        }
+                        if (!int.TryParse(unitText, out int unitPrice))
+                        {
+                            errors.Add($"UnitPrice inválido en SaleProducts fila {row}");
+                            continue;
+                        }
+
+                        var key = $"{date:yyyy-MM-dd}|{email.ToLower()}";
+
+                        if (!salesDict.TryGetValue(key, out var sale))
+                        {
+                            var client = await _users.FindByEmailAsync(email);
+                            if (client == null)
+                            {
+                                errors.Add($"Cliente no encontrado en SaleProducts fila {row}: {email}");
+                                continue;
+                            }
+
+                            sale = new Sale { Date = date, ClientId = client.Id };
+                            _db.Sales.Add(sale);
+                            await _db.SaveChangesAsync();
+
+                            salesDict[key] = sale;
+                        }
 
                         var product = await _db.Products.FirstOrDefaultAsync(p => p.Name == productName);
-                        if (product == null) continue;
+                        if (product == null)
+                        {
+                            errors.Add($"Producto no encontrado en SaleProducts fila {row}: {productName}");
+                            continue;
+                        }
 
-                        var sp = new SaleProduct
+                        _db.SaleProducts.Add(new SaleProduct
                         {
                             SaleId = sale.Id,
                             ProductId = product.Id,
-                            Quantity = int.Parse(wsSP.Cells[row, 3].Text.Trim()),
-                            UnitPrice = int.Parse(wsSP.Cells[row, 4].Text.Trim())
-                        };
-
-                        _db.SaleProducts.Add(sp);
+                            Quantity = qty,
+                            UnitPrice = unitPrice
+                        });
                     }
 
                     await _db.SaveChangesAsync();
                 }
 
-                return true;
+                await trx.CommitAsync();
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                errors.Add("Fatal: " + ex.Message);
             }
-        }
-    
 
-    public async Task<byte[]> DownloadTemplateAsync()
+            return errors;
+        }
+
+
+
+
+
+
+        public async Task<byte[]> DownloadTemplateAsync()
         {
             using var package = new ExcelPackage();
 
