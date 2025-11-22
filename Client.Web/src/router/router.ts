@@ -9,12 +9,18 @@ import { useAuth } from '@/composables/useAuth';
 import DashboardCreateStudent from '@/views/DashboardCreateStudent.vue';
 import DashboardCreateSectionView from '@/views/DashboardCreateSectionView.vue';
 import DashboardEditStudentView from '@/views/DashboardEditStudentView.vue';
+import RegisterView from '@/views/RegisterView.vue';
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/login',
     name: 'Login',
     component: LoginView,
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: RegisterView,
   },
   {
     path: '/dashboard',

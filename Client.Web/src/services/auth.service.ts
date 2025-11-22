@@ -12,4 +12,12 @@ export const authService = {
     });
     return handleResponse<string>(res);
   },
+  async register(email: string, password: string): Promise<ApiResponse<string>> {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, password: password }),
+    });
+    return handleResponse<string>(res);
+  },
 };

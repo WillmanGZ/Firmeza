@@ -12,20 +12,28 @@ const { setUserInfo } = useAuth();
 
 const email = ref('');
 const password = ref('');
+const confirmPassword = ref('');
 
-async function handleLogin() {
-  if (!email.value || !password.value) {
+async function handleRegister() {
+  if (!email.value || !password.value || !confirmPassword.value) {
     ToastService.success('Debes rellenar todos los campos');
     return;
   }
+
+  if (password.value !== confirmPassword.value) {
+    ToastService.warning('Las contraseñas no coinciden');
+    return;
+  }
+
   try {
-    const data = await authService.login(email.value, password.value);
+    const data = await authService.register(email.value, password.value);
+
     if (data.payload) {
       setUserInfo(data.payload);
       router.push('/dashboard');
     }
   } catch (error) {
-    ToastService.warning(`Credenciales inválidas`);
+    ToastService.warning(`No fue posible crear la cuenta`);
     console.log(error);
   }
 }
@@ -44,16 +52,16 @@ async function handleLogin() {
     <section
       class="min-w-[200px] w-[80%] md:w-auto lg:w-auto bg-white p-8 pt-10 rounded-2xl border border-blue-700 shadow"
     >
-      <h2 class="text-2xl font-medium text-center mb-2 text-blue-700">Iniciar sesión</h2>
+      <h2 class="text-2xl font-medium text-center mb-2 text-blue-700">Crear cuenta</h2>
       <p class="text-gray-500 text-sm text-center mb-6">
-        Ingresa tus credenciales para acceder a la plataforma
+        Registra tu cuenta para acceder a la plataforma
       </p>
 
-      <form @submit.prevent="handleLogin" class="space-y-4">
+      <form @submit.prevent="handleRegister" class="space-y-4">
         <article class="relative">
-          <label class="block text-sm font-semibold mb-1" for="email-input"
-            >Correo electrónico</label
-          >
+          <label class="block text-sm font-semibold mb-1" for="email-input">
+            Correo electrónico
+          </label>
           <MailIcon class="absolute left-3 top-8.5 w-5 h-5 text-blue-700" />
           <input
             id="email-input"
@@ -66,7 +74,7 @@ async function handleLogin() {
         </article>
 
         <article class="relative">
-          <label class="block text-sm font-semibold mb-1" for="password-input">Contraseña</label>
+          <label class="block text-sm font-semibold mb-1" for="password-input"> Contraseña </label>
           <LockIcon class="absolute left-3 top-8.5 w-5 h-5 text-blue-700" />
           <input
             id="password-input"
@@ -78,21 +86,37 @@ async function handleLogin() {
           />
         </article>
 
+        <article class="relative">
+          <label class="block text-sm font-semibold mb-1" for="confirm-password-input">
+            Confirmar contraseña
+          </label>
+          <LockIcon class="absolute left-3 top-8.5 w-5 h-5 text-blue-700" />
+          <input
+            id="confirm-password-input"
+            v-model="confirmPassword"
+            type="password"
+            placeholder="********"
+            class="w-full pl-10 pr-3 py-2 border rounded-lg outline-none focus:ring-2 border-gray-300 focus:ring-blue-500 text-sm"
+            required
+          />
+        </article>
+
         <button
           type="submit"
           class="w-full bg-blue-700 text-white py-2 rounded-lg hover:bg-blue-800 transition cursor-pointer"
         >
-          Entrar
+          Registrarse
         </button>
       </form>
       <RouterLink
-        to="/register"
+        to="/login"
         class="block text-center mt-5 text-sm font-medium text-blue-700 hover:text-blue-800 transition underline underline-offset-2 cursor-pointer"
       >
-        Registrarse
+        Ya tengo cuenta
       </RouterLink>
     </section>
   </main>
+
   <footer class="flex flex-col items-center mt-6 px-4">
     <div class="flex w-full max-w-md h-2.5 rounded-full overflow-hidden shadow-sm">
       <div class="bg-yellow-400 w-1/3"></div>
