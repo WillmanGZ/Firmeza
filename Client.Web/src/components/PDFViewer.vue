@@ -4,7 +4,10 @@
     <button @click="openPdf" class="btn">Ver PDF</button>
 
     <!-- DIALOG -->
-    <dialog ref="dialogRef" class="fixed inset-0 border-gray-400 border-2 m-auto w-svw max-w-4xl rounded-xl p-0 shadow-xl">
+    <dialog
+      ref="dialogRef"
+      class="fixed inset-0 border-gray-400 border-2 m-auto w-svw max-w-4xl rounded-xl p-0 shadow-xl"
+    >
       <div class="flex flex-col p-6 bg-gray-300 rounded-xl">
         <h2 class="text-2xl font-bold mb-4 text-gray-800">PDF del estudiante</h2>
 
@@ -31,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { studentService } from '@/services/estudiante.service';
+import { studentService } from '@/services/products.service';
 import ToastService from '@/utils/ToastService';
 import { ref } from 'vue';
 

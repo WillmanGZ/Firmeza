@@ -1,6 +1,6 @@
 export interface UserRegister {
-  UserName: string;
-  Email: string;
-  Password: string;
-  PhoneNumber: string;
+  username: string;
+  email: string;
+  password: string;
+  phoneNumber: string;
 }

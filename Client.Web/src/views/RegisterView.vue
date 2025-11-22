@@ -22,10 +22,10 @@ async function handleRegister() {
 
   try {
     const payload: UserRegister = {
-      UserName: userName.value,
-      Email: email.value,
-      Password: password.value,
-      PhoneNumber: phoneNumber.value,
+      username: userName.value,
+      email: email.value,
+      password: password.value,
+      phoneNumber: phoneNumber.value,
     };
 
     const data = await authService.register(payload);

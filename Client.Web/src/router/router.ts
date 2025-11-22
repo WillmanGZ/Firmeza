@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
 import LoginView from '@/views/LoginView.vue';
-import DashboardLayout from '../layouts/DashboardLayout.vue';
-import DashboardHomeView from '../views/DashboardHomeView.vue';
-import DashboardStudentsView from '@/views/DashboardStudentsView.vue';
-import DashboardSectionsView from '@/views/DashboardSectionsView.vue';
 import { useAuth } from '@/composables/useAuth';
 import RegisterView from '@/views/RegisterView.vue';
+import ShopLayout from '../layouts/ShopLayout.vue';
+import CartView from '@/views/CartView.vue';
+import HomeView from '../views/HomeView.vue';
+import ProductsView from '@/views/ProductsView.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -19,28 +19,28 @@ const routes: RouteRecordRaw[] = [
     component: RegisterView,
   },
   {
-    path: '/dashboard',
-    component: DashboardLayout,
+    path: '/tienda',
+    component: ShopLayout,
     meta: { requiresAuth: true },
     children: [
       {
         path: '',
-        redirect: { name: 'DashboardHome' },
+        redirect: { name: 'Home' },
       },
       {
         path: 'inicio',
-        name: 'DashboardHome',
-        component: DashboardHomeView,
+        name: 'Home',
+        component: HomeView,
       },
       {
-        path: 'estudiantes',
-        name: 'DashboardStudents',
-        component: DashboardStudentsView,
+        path: 'productos',
+        name: 'Products',
+        component: ProductsView,
       },
       {
-        path: 'secciones',
-        name: 'DashboardSections',
-        component: DashboardSectionsView,
+        path: 'carrito',
+        name: 'Cart',
+        component: CartView,
       },
     ],
   },
@@ -68,7 +68,7 @@ router.beforeEach((to, from, next) => {
   }
 
   if (to.name === 'Login' && isAuthenticated()) {
-    next({ name: 'DashboardHome' });
+    next({ name: 'Home' });
     return;
   }
 

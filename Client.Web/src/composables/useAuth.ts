@@ -23,7 +23,7 @@ export function useAuth() {
     userToken.value = token;
   };
 
-  const getUserInfo = (): string | null => {
+  const getToken = (): string | null => {
     const cookie = Cookies.get(TOKEN_KEY);
     if (!cookie) return null;
 
@@ -46,7 +46,7 @@ export function useAuth() {
   return {
     userToken,
     setUserInfo,
-    getUserInfo,
+    getToken,
     removeUserInfo,
     isAuthenticated,
   };

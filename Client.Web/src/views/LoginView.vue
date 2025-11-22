@@ -6,6 +6,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
 import { authService } from '@/services/auth.service';
+import type { UserLogin } from '@/interfaces/user-login';
 
 const router = useRouter();
 const { setUserInfo } = useAuth();
@@ -19,7 +20,9 @@ async function handleLogin() {
     return;
   }
   try {
-    const data = await authService.login(email.value, password.value);
+    const userInfo: UserLogin = { email: email.value, password: password.value };
+
+    const data = await authService.login(userInfo);
     if (data.payload) {
       setUserInfo(data.payload);
       router.push('/dashboard');
