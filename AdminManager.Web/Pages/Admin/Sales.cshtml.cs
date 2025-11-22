@@ -53,6 +53,30 @@ namespace AdminManager.Web.Pages.Admin
             return File(bytes, "application/pdf", "todas_las_ventas.pdf");
         }
 
+        public async Task<IActionResult> OnPostDeleteAsync(Guid id)
+        {
+            // cargar venta con sus saleProducts
+            var sale = await _context.Sales
+                .Include(s => s.SaleProducts)
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (sale == null)
+            {
+                return NotFound();
+            }
+
+            // eliminar los saleProducts asociados
+            _context.SaleProducts.RemoveRange(sale.SaleProducts);
+
+            // eliminar la venta
+            _context.Sales.Remove(sale);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToPage();
+        }
+
+
 
         public class SaleView
         {
