@@ -12,18 +12,15 @@ namespace Firmeza.API.Services
         private readonly ISaleRepository _repository;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IMapper _mapper;
-        private readonly IEmailService _emailService;
 
         public SaleService(
             ISaleRepository repository,
             UserManager<IdentityUser> userManager,
-            IEmailService emailService,
             IMapper mapper)
         {
             _repository = repository;
             _userManager = userManager;
             _mapper = mapper;
-            _emailService = emailService;
         }
 
         public async Task<ApiResponse<object>> GetAllAsync()
@@ -104,8 +101,6 @@ namespace Firmeza.API.Services
             sale.Client = client;
 
             await _repository.AddAsync(sale);
-
-            _emailService.SendPurcharseConfirmation(sale);
 
             return new ApiResponse<object>
             {
