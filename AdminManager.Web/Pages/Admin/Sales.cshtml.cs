@@ -1,7 +1,10 @@
+﻿using AdminManager.Web.Data;
+using AdminManager.Web.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using AdminManager.Web.Data;
-using Microsoft.AspNetCore.Authorization;
+
 
 namespace AdminManager.Web.Pages.Admin
 {
@@ -9,10 +12,12 @@ namespace AdminManager.Web.Pages.Admin
     public class SalesModel : PageModel
     {
         private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        public SalesModel(AppDbContext context)
+        public SalesModel(AppDbContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
 
         public List<SaleView> Sales { get; set; } = new();
@@ -28,6 +33,7 @@ namespace AdminManager.Web.Pages.Admin
 
             Sales = data.Select(s => new SaleView
             {
+                Id = s.Id,   // ← agregado para descargar
                 Date = s.Date,
                 ClientName = s.Client?.UserName ?? "Sin cliente",
                 ProductCount = s.SaleProducts.Count,
@@ -37,13 +43,40 @@ namespace AdminManager.Web.Pages.Admin
             TotalSales = Sales.Count;
         }
 
+        // -------------------------
+        // DESCARGAR RECIBO EN PDF
+        // -------------------------
+        public async Task<IActionResult> OnGetDownloadAsync(Guid id)
+        {
+            var filePath = Path.Combine(_env.WebRootPath, "recibos", $"recibo_{id}.pdf");
+
+            if (!System.IO.File.Exists(filePath))
+                return NotFound();
+
+            var bytes = await System.IO.File.ReadAllBytesAsync(filePath);
+
+            return File(bytes, "application/pdf", $"recibo_{id}.pdf");
+        }
+
+        public async Task<IActionResult> OnGetDownloadAllAsync()
+        {
+            var pdfService = HttpContext.RequestServices.GetRequiredService<AllSalesPdfService>();
+
+            var bytes = await pdfService.GenerateAllSalesPdfAsync();
+
+            return File(bytes, "application/pdf", "todas_las_ventas.pdf");
+        }
+
+
         public class SaleView
         {
+            public Guid Id { get; set; }  // ← agregado
             public DateTime Date { get; set; }
             public string ClientName { get; set; } = string.Empty;
             public int ProductCount { get; set; }
             public decimal Total { get; set; }
         }
     }
+
 }
 

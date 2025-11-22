@@ -25,7 +25,6 @@ namespace AdminManager.Web.Services
 
             try
             {
-                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
                 using var package = new ExcelPackage(stream);
 

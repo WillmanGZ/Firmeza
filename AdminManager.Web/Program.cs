@@ -4,11 +4,13 @@ using AdminManager.Web.Data.Seeders;
 using AdminManager.Web.Services;
 using Microsoft.AspNetCore.Identity;
 using OfficeOpenXml;
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDatabase();
 
 ExcelPackage.License.SetNonCommercialPersonal("FirmezaApp");
+QuestPDF.Settings.License = LicenseType.Community;
 
 // Use identity user system and role system
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
@@ -17,6 +19,10 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddDefaultUI(); // Use razor pages
 
 builder.Services.AddScoped<ExcelImportService>();
+
+builder.Services.AddScoped<ReceiptPdfService>();
+
+builder.Services.AddScoped<AllSalesPdfService>();
 
 builder.Services.AddRazorPages();
 
