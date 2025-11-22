@@ -1,13 +1,24 @@
 <script setup lang="ts">
 import { useCart } from '@/composables/useCart';
+import { checkoutService } from '@/services/checkout.service';
 import ToastService from '@/utils/ToastService';
 
 const cart = useCart();
 
-function onCheckout() {
-  console.log('Checkout payload:', cart.items.value);
-  cart.clear();
-  ToastService.success('Checkout completado — Carrito limpiado');
+async function onCheckout() {
+  if (cart.items.value.length === 0) {
+    ToastService.error('El carrito está vacío');
+    return;
+  }
+
+  const resp = await checkoutService.process(cart.items.value);
+
+  if (resp.success) {
+    ToastService.success('Compra realizada correctamente');
+    cart.clear();
+  } else {
+    ToastService.error(resp.message ?? 'No se pudo llevar a cabo la compra');
+  }
 }
 </script>
 

@@ -159,7 +159,7 @@ namespace Firmeza.API.Services
                 };
             }
 
-            existing.Date = DateTime.Now;
+            existing.Date = DateTime.UtcNow;
             existing.ClientId = request.ClientId;
             existing.Client = client;
 

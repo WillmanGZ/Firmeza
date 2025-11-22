@@ -26,6 +26,10 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 builder.Services.AddScoped<ISaleRepository, SaleRepository>();
 
+builder.Services.AddScoped<ISaleService, SaleService>();
+
+builder.Services.AddScoped<ISaleProductService, SaleProductService>();
+
 builder.Services.AddScoped<ISaleProductRepository, SaleProductRepository>();
 
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -44,17 +48,21 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("LocalhostPolicy", policy =>
+    options.AddPolicy("OpenCorsPolicy", policy =>
     {
         policy
-            .SetIsOriginAllowed(origin =>
-                origin.StartsWith("http://localhost") ||
-                origin.StartsWith("https://localhost"))
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+            .AllowAnyOrigin()   // permite cualquier dominio
+            .AllowAnyHeader()   // permite cualquier header
+            .AllowAnyMethod();  // permite cualquier método HTTP
     });
 });
+
+builder.Services.AddControllers().AddJsonOptions(x =>
+{
+    x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    x.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+});
+
 
 var app = builder.Build();
 
@@ -68,6 +76,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseCors("LocalhostPolicy");
+app.UseCors("OpenCorsPolicy");
 
 app.Run();

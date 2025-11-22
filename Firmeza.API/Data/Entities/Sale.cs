@@ -9,7 +9,7 @@ namespace Firmeza.API.Data.Entities
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required(ErrorMessage = "La fecha de venta es obligatoria")]
-        public DateTime Date { get; set; } = DateTime.Now;
+        public DateTime Date { get; set; } = DateTime.UtcNow;
 
         [Required(ErrorMessage = "El Id del cliente es obligatorio")]
         public string ClientId { get; set; }
