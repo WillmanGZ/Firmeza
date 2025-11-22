@@ -10,7 +10,7 @@ export const authService = {
     const res = await fetch(`${API_URL}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user }),
+      body: JSON.stringify(user),
     });
     return handleResponse<string>(res);
   },

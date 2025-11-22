@@ -25,7 +25,7 @@ async function handleLogin() {
     const data = await authService.login(userInfo);
     if (data.payload) {
       setUserInfo(data.payload);
-      router.push('/dashboard');
+      router.push('/tienda/inicio');
     }
   } catch (error) {
     ToastService.warning(`Credenciales inválidas`);

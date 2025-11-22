@@ -2,9 +2,7 @@
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import BookIcon from '@/assets/icons/BookIcon.vue';
-/* import DocumentIcon from '@/assets/icons/DocumentIcon.vue'; */
 import HomeIcon from '@/assets/icons/HomeIcon.vue';
-import UserIcon from '@/assets/icons/UserIcon.vue';
 import StackIcon from '@/assets/icons/StackIcon.vue';
 import LogOutIcon from '@/assets/icons/LogOutIcon.vue';
 import MenuIcon from '@/assets/icons/MenuIcon.vue';
@@ -17,10 +15,9 @@ const isOpen = ref(false);
 const { removeUserInfo } = useAuth();
 
 const navigation = [
-  { name: 'Inicio', icon: HomeIcon, path: '/dashboard/inicio' },
-  { name: 'Estudiantes', icon: UserIcon, path: '/dashboard/estudiantes' },
-/*   { name: 'Notas', icon: DocumentIcon, path: '/dashboard/notas' }, */
-  { name: 'Secciones', icon: StackIcon, path: '/dashboard/secciones' },
+  { name: 'Inicio', icon: HomeIcon, path: '/tienda/inicio' },
+  { name: 'Productos', icon: BookIcon, path: '/tienda/productos' },
+  { name: 'Carrito', icon: StackIcon, path: '/tienda/carrito' },
 ];
 
 const isActive = (path: string) => route.path.startsWith(path);
@@ -55,16 +52,12 @@ const logOut = () => {
       <header
         class="flex flex-col sm:flex-col md:flex-row lg:flex-row justify-center border-b border-gray-300 items-center py-5 space-y-2 select-none text-center"
       >
-        <article class="rounded-xl flex items-center justify-center">
-          <BookIcon class="text-blue-700 w-11 h-11" />
-        </article>
-
         <div>
           <h1 class="text-2xl font-bold">
-            <span class="text-blue-700">Codex</span><span class="text-red-600">Scholar</span>
+            <span class="text-blue-700">Firmeza</span>
           </h1>
 
-          <p class="text-gray-500 text-xs sm:text-sm font-medium">Plataforma Educativa</p>
+          <p class="text-gray-500 text-xs sm:text-sm font-medium">Plataforma de ventas</p>
         </div>
       </header>
 
