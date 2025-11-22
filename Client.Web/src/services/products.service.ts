@@ -3,7 +3,7 @@ import type { Product } from '@/interfaces/product';
 import { handleResponse } from '@/helpers/handle-response';
 import { useAuth } from '@/composables/useAuth';
 
-const API_URL = 'http://localhost:8081/api/products'; // ajusta si es otro puerto
+const API_URL = 'http://localhost:5152/api/products'; // ajusta si es otro puerto
 
 export const productService = {
   async getAll(): Promise<ApiResponse<Product[]>> {

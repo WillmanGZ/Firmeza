@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import PlusIcon from '@/assets/icons/PlusIcon.vue';
 import type { Product } from '@/interfaces/product';
 import { productService } from '@/services/products.service';
 import ToastService from '@/utils/ToastService';
@@ -35,16 +34,8 @@ function addToCart(product: Product) {
     <header class="flex flex-col md:flex-row items-center justify-between gap-4">
       <div>
         <h1 class="text-xl md:text-2xl font-bold">Productos</h1>
-        <p class="text-sm text-gray-500">Explora y gestiona los productos disponibles</p>
+        <p class="text-sm text-gray-500">Explora y compra los productos disponibles</p>
       </div>
-
-      <RouterLink
-        to="/dashboard/crear-producto"
-        class="inline-flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white text-sm font-medium py-2 px-3 rounded-lg shadow-sm transition"
-      >
-        <PlusIcon class="w-5 h-5" />
-        Crear Producto
-      </RouterLink>
     </header>
 
     <!-- CONTENT -->
@@ -65,17 +56,6 @@ function addToCart(product: Product) {
           </div>
 
           <h3 class="text-lg font-semibold mt-3">No hay productos disponibles</h3>
-          <p class="text-sm text-gray-500 mb-6 max-w-md">
-            Crea productos para mostrarlos en esta sección.
-          </p>
-
-          <RouterLink
-            to="/dashboard/crear-producto"
-            class="inline-flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white text-sm font-medium py-2 px-4 rounded-lg"
-          >
-            <PlusIcon class="w-5 h-5" />
-            Crear Primer Producto
-          </RouterLink>
         </div>
 
         <!-- GRID DE PRODUCTOS -->
