@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import LockIcon from '@/assets/icons/LockIcon.vue';
 import MailIcon from '@/assets/icons/MailIcon.vue';
-import BookIcon from '@/assets/icons/BookIcon.vue';
 import ToastService from '@/utils/ToastService';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -34,17 +33,11 @@ async function handleLogin() {
 
 <template>
   <header class="flex flex-col justify-center items-center py-7 space-y-2 select-none text-center">
-    <article
-      class="p-2 sm:p-3 border-2 border-blue-700 rounded-xl flex items-center justify-center"
-    >
-      <BookIcon class="text-blue-700 w-8 h-8 sm:w-10 sm:h-10" />
-    </article>
-
     <h1 class="text-3xl sm:text-4xl lg:text-4xl font-bold">
-      <span class="text-blue-700">Codex</span><span class="text-red-600">Scholar</span>
+      <span class="text-blue-700">Firmeza</span>
     </h1>
 
-    <p class="text-gray-500 text-xs sm:text-sm font-medium">Plataforma Educativa</p>
+    <p class="text-gray-500 text-xs sm:text-sm font-medium">Plataforma de ventas</p>
   </header>
 
   <main class="flex items-center justify-center">
@@ -66,7 +59,7 @@ async function handleLogin() {
             id="email-input"
             v-model="email"
             type="email"
-            placeholder="estudiante@ejemplo.com"
+            placeholder="tucorreo@ejemplo.com"
             class="w-full pl-10 pr-3 py-2 border rounded-lg outline-none focus:ring-2 border-gray-300 focus:ring-blue-500 text-sm"
             required
           />
@@ -101,7 +94,7 @@ async function handleLogin() {
       <div class="bg-red-600 w-1/3"></div>
     </div>
     <p class="text-gray-500 text-xs mt-4 text-center">
-      © 2025 CodexScholar. Plataforma educativa.
+      © 2025 Firmeza. Plataforma de ventas.
     </p>
   </footer>
 </template>
