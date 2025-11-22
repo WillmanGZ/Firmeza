@@ -3,12 +3,8 @@ import LoginView from '@/views/LoginView.vue';
 import DashboardLayout from '../layouts/DashboardLayout.vue';
 import DashboardHomeView from '../views/DashboardHomeView.vue';
 import DashboardStudentsView from '@/views/DashboardStudentsView.vue';
-import DashboardGradesView from '@/views/DashboardGradesView.vue';
 import DashboardSectionsView from '@/views/DashboardSectionsView.vue';
 import { useAuth } from '@/composables/useAuth';
-import DashboardCreateStudent from '@/views/DashboardCreateStudent.vue';
-import DashboardCreateSectionView from '@/views/DashboardCreateSectionView.vue';
-import DashboardEditStudentView from '@/views/DashboardEditStudentView.vue';
 import RegisterView from '@/views/RegisterView.vue';
 
 const routes: RouteRecordRaw[] = [
@@ -42,29 +38,9 @@ const routes: RouteRecordRaw[] = [
         component: DashboardStudentsView,
       },
       {
-        path: 'crear-estudiante',
-        name: 'DashboardCreateStudents',
-        component: DashboardCreateStudent,
-      },
-      {
-        path: 'editar-estudiante/:id',
-        name: 'DashboardEditStudent',
-        component: DashboardEditStudentView,
-      },
-      {
-        path: 'notas',
-        name: 'DashboardGrades',
-        component: DashboardGradesView,
-      },
-      {
         path: 'secciones',
         name: 'DashboardSections',
         component: DashboardSectionsView,
-      },
-      {
-        path: 'crear-seccion',
-        name: 'DashboardCreateSection',
-        component: DashboardCreateSectionView,
       },
     ],
   },
