@@ -3,6 +3,9 @@ import type { Product } from '@/interfaces/product';
 import { productService } from '@/services/products.service';
 import ToastService from '@/utils/ToastService';
 import { ref, onMounted } from 'vue';
+import { useCart } from '@/composables/useCart';
+
+const cart = useCart();
 
 const products = ref<Product[]>([]);
 const loading = ref(true);
@@ -23,6 +26,7 @@ async function obtenerProductos() {
 }
 
 function addToCart(product: Product) {
+  cart.add(product);
   console.log('Producto añadido al carrito:', product);
   ToastService.success(product.name + ' añadido al carrito');
 }

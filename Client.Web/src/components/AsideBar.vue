@@ -85,7 +85,7 @@ const logOut = () => {
           Cerrar Sesión
         </button>
         <div
-          class="w-[95%] max-w-md h-1 mb-2 rounded-full shadow-sm bg-gradient-to-r from-yellow-400 via-blue-700 to-red-600"
+          class="w-[95%] max-w-md h-1 mb-2 rounded-full shadow-sm bg-linear-to-r from-yellow-400 via-blue-700 to-red-600"
         ></div>
       </div>
     </div>
