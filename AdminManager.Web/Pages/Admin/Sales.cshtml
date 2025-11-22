@@ -18,7 +18,6 @@
             <th>Cliente</th>
             <th>Productos</th>
             <th>Total</th>
-            <th>Acciones</th>   <!-- ← agregado -->
         </tr>
     </thead>
     <tbody>
@@ -29,13 +28,6 @@
                 <td>@sale.ClientName</td>
                 <td>@sale.ProductCount</td>
                 <td>$@sale.Total</td>
-                <td>
-                    <a asp-page-handler="Download"
-                       asp-route-id="@sale.Id"
-                       class="btn btn-sm btn-primary">
-                        Recibo PDF
-                    </a>
-                </td>
             </tr>
         }
     </tbody>

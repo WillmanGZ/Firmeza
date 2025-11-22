@@ -33,7 +33,7 @@ namespace AdminManager.Web.Pages.Admin
 
             Sales = data.Select(s => new SaleView
             {
-                Id = s.Id,   // ← agregado para descargar
+                Id = s.Id,
                 Date = s.Date,
                 ClientName = s.Client?.UserName ?? "Sin cliente",
                 ProductCount = s.SaleProducts.Count,
@@ -43,20 +43,6 @@ namespace AdminManager.Web.Pages.Admin
             TotalSales = Sales.Count;
         }
 
-        // -------------------------
-        // DESCARGAR RECIBO EN PDF
-        // -------------------------
-        public async Task<IActionResult> OnGetDownloadAsync(Guid id)
-        {
-            var filePath = Path.Combine(_env.WebRootPath, "recibos", $"recibo_{id}.pdf");
-
-            if (!System.IO.File.Exists(filePath))
-                return NotFound();
-
-            var bytes = await System.IO.File.ReadAllBytesAsync(filePath);
-
-            return File(bytes, "application/pdf", $"recibo_{id}.pdf");
-        }
 
         public async Task<IActionResult> OnGetDownloadAllAsync()
         {

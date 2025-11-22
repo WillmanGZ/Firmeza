@@ -20,8 +20,6 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 
 builder.Services.AddScoped<ExcelImportService>();
 
-builder.Services.AddScoped<ReceiptPdfService>();
-
 builder.Services.AddScoped<AllSalesPdfService>();
 
 builder.Services.AddRazorPages();
