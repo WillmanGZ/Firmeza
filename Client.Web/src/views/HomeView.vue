@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import BookIcon from '@/assets/icons/BookIcon.vue';
-import StackIcon from '@/assets/icons/StackIcon.vue';
+import StackIcon from '@/assets/icons/CartIcon.vue';
 import UserIcon from '@/assets/icons/UserIcon.vue';
 </script>
 

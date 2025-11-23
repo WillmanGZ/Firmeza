@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import BookIcon from '@/assets/icons/BookIcon.vue';
 import HomeIcon from '@/assets/icons/HomeIcon.vue';
-import StackIcon from '@/assets/icons/StackIcon.vue';
+import CartIcon from '@/assets/icons/CartIcon.vue';
 import LogOutIcon from '@/assets/icons/LogOutIcon.vue';
 import MenuIcon from '@/assets/icons/MenuIcon.vue';
 import { useAuth } from '@/composables/useAuth';
@@ -17,7 +17,7 @@ const { removeUserInfo } = useAuth();
 const navigation = [
   { name: 'Inicio', icon: HomeIcon, path: '/tienda/inicio' },
   { name: 'Productos', icon: BookIcon, path: '/tienda/productos' },
-  { name: 'Carrito', icon: StackIcon, path: '/tienda/carrito' },
+  { name: 'Carrito', icon: CartIcon, path: '/tienda/carrito' },
 ];
 
 const isActive = (path: string) => route.path.startsWith(path);
