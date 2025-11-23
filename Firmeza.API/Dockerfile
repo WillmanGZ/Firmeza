@@ -1,12 +1,15 @@
-# Consulte https://aka.ms/customizecontainer para aprender a personalizar su contenedor de depuración y cómo Visual Studio usa este Dockerfile para compilar sus imágenes para una depuración más rápida.
-
-# Esta fase se usa cuando se ejecuta desde VS en modo rápido (valor predeterminado para la configuración de depuración)
+# Esta fase se usa cuando se ejecuta desde VS en modo rápido
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 USER $APP_UID
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
 
+# --- CAMBIOS REALIZADOS AQUÍ ---
+# 1. Definimos la variable de entorno para que .NET 9 use el puerto 5152
+ENV ASPNETCORE_HTTP_PORTS=5152
+
+# 2. Exponemos el puerto 5152 (y quitamos el 8080/8081 por defecto)
+EXPOSE 5152
+# -------------------------------
 
 # Esta fase se usa para compilar el proyecto de servicio
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
@@ -18,12 +21,12 @@ COPY . .
 WORKDIR "/src/Firmeza.API"
 RUN dotnet build "./Firmeza.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# Esta fase se usa para publicar el proyecto de servicio que se copiará en la fase final.
+# Esta fase se usa para publicar el proyecto
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./Firmeza.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# Esta fase se usa en producción o cuando se ejecuta desde VS en modo normal (valor predeterminado cuando no se usa la configuración de depuración)
+# Esta fase se usa en producción o modo normal
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
