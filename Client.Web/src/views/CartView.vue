@@ -14,7 +14,9 @@ async function onCheckout() {
   const resp = await checkoutService.process(cart.items.value);
 
   if (resp.success) {
-    ToastService.success('Compra realizada correctamente');
+    ToastService.success(
+      'Compra realizada correctamente, pronto te llegará la confirmación al correo',
+    );
     cart.clear();
   } else {
     ToastService.error(resp.message ?? 'No se pudo llevar a cabo la compra');
