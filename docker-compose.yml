@@ -69,6 +69,22 @@ services:
     networks:
       - firmeza-network
 
+    # Vue
+  vue-frontend:
+    container_name: vue-frontend-container
+    build:
+      context: .
+      dockerfile: Client.Web/Dockerfile 
+    ports:
+      - "5173:80" 
+    environment:
+      - VUE_APP_API_URL=http://localhost:5152
+      - NODE_ENV=development
+    depends_on:
+      - firmeza-api
+    networks:
+      - firmeza-network
+
 volumes:
   postgres_data:
 networks:

@@ -2,7 +2,7 @@ import type { ApiResponse } from '@/interfaces/api-response';
 import { handleResponse } from '@/helpers/handle-response';
 import { useAuth } from '@/composables/useAuth';
 import type { CartItem } from '@/composables/useCart';
-import type { SaleFullCreate } from '@/interfaces/Sale-full-create';
+import type { SaleFullCreate } from '@/interfaces/sale-full-create';
 
 const API_URL = 'http://localhost:5152/api/sales/full';
 
