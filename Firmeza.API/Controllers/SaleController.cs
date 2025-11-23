@@ -4,6 +4,7 @@ using Firmeza.API.DTOs.SaleProduct;
 using Firmeza.API.Interfaces;
 using Firmeza.API.Responses;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Firmeza.API.Controllers
@@ -16,12 +17,14 @@ namespace Firmeza.API.Controllers
         private readonly ISaleService _saleService;
         private readonly ISaleProductService _saleProductService;
         private readonly IEmailService _emailService;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public SaleController(ISaleService saleService, ISaleProductService saleProductService, IEmailService emailService)
+        public SaleController(ISaleService saleService, ISaleProductService saleProductService, IEmailService emailService, UserManager<IdentityUser> userManager)
         {
             _saleService = saleService;
             _saleProductService = saleProductService;
             _emailService = emailService;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -122,16 +125,12 @@ namespace Firmeza.API.Controllers
                 Products = createdProducts
             };
 
-            var sale = await _saleService.GetByIdAsync(saleId);
+  
+            var client = _userManager.FindByIdAsync(userId);
 
-            if (sale.Success && sale.Payload != null)
+            if (client.Result != null)
             {
-                var saleDto = sale.Payload as Sale;
-
-                if (saleDto != null)
-                {
-                    _emailService.SendPurcharseConfirmation(saleDto);
-                }
+                _emailService.SendPurcharseConfirmation(client.Result.Email);
             }
 
             return StatusCode(response.Code, response);

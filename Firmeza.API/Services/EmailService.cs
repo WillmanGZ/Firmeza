@@ -33,18 +33,14 @@ namespace Firmeza.API.Services
             return SendEmail(user.Email, subject, body);
         }
 
-        public bool SendPurcharseConfirmation(Sale sale)
+        public bool SendPurcharseConfirmation(String email)
         {
-            var client = _userManager.FindByIdAsync(sale.Client.Id).Result;
-
-            if (client == null) return false;
-            if (client.Email == null) return false;
 
             string subject = "Thanks for your purcharse";
-            string body = $"Hello {client.NormalizedUserName},\n" +
+            string body = $"Hello,\n" +
                           $"Your products will arrive soon.\n" +
                           $"\nThank you.";
-            return SendEmail(client.Email, subject, body);
+            return SendEmail(email, subject, body);
         }
 
         private bool SendEmail(string email, string subject, string body)

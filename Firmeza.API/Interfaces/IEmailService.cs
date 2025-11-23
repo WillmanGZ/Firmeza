@@ -6,6 +6,6 @@ namespace Firmeza.API.Interfaces
     public interface IEmailService
     {
         bool SendAccountCreated(IdentityUser user);
-        bool SendPurcharseConfirmation(Sale sale);
+        bool SendPurcharseConfirmation(String email);
     }
 }
