@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # PG
+  postgres-db:
+    image: postgres:15
+    container_name: firmeza-postgres
+    environment:
+      POSTGRES_DB: firmeza
+      POSTGRES_USER: pruebas
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - firmeza-network
+
+  # API
+  firmeza-api:
+    image: firmeza-api-img
+    container_name: firmeza-api-container
+    build:
+      context: .
+      dockerfile: Firmeza.API/Dockerfile
+    ports:
+      - "5152:5152"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=5152
+      - DB_HOST=postgres-db
+      - DB_PORT=5432
+      - DB_NAME=firmeza
+      - DB_USER=pruebas
+      - DB_PASS=1234
+      - JWT_KEY=S7L7W5xHq3XkFz9qOa8GZ2yBtK0dQp1vJr6eH3bM9nT4Yf2sUc7Vx5Rz0Pq8Cw1D==
+      - JWT_ISSUER=AdminManagerAPI
+      - JWT_AUDIENCE=AdminManagerClient
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=587
+      - SMTP_USER=airfightergx@gmail.com
+      - SMTP_PASSWORD=hmkb szsb gmow exeo
+      - SMTP_FROM=tucuenta@gmail.com
+    depends_on:
+      - postgres-db
+    networks:
+      - firmeza-network
+
+  # Razor
+  admin-web:
+    image: admin-web-img
+    container_name: admin-web-container
+    build:
+      context: .
+      dockerfile: AdminManager.Web/Dockerfile
+    ports:
+      - "5041:5041"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=5041
+      - API_BASE_URL=http://firmeza-api:5152
+      - DB_HOST=postgres-db 
+      - DB_PORT=5432        
+      - DB_NAME=firmeza
+      - DB_USER=pruebas     
+      - DB_PASS=1234
+    depends_on:
+      - firmeza-api
+    networks:
+      - firmeza-network
+
+volumes:
+  postgres_data:
+networks:
+  firmeza-network:
+    driver: bridge

@@ -1,6 +1,7 @@
 using AdminManager.Web.Configs;
 using AdminManager.Web.Data;
 using AdminManager.Web.Data.Seeders;
+using AdminManager.Web.Extensions;
 using AdminManager.Web.Services;
 using Microsoft.AspNetCore.Identity;
 using OfficeOpenXml;
@@ -25,6 +26,8 @@ builder.Services.AddScoped<AllSalesPdfService>();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
+
+app.ApplyMigrations<AppDbContext>();
 
 // Use seed to create default admin + roles
 using var scope = app.Services.CreateScope();

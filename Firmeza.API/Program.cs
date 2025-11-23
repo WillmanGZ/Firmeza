@@ -1,6 +1,7 @@
 using DotNetEnv;
 using Firmeza.API.Configs;
 using Firmeza.API.Data;
+using Firmeza.API.Extensions;
 using Firmeza.API.Interfaces;
 using Firmeza.API.Repositories;
 using Firmeza.API.Services;
@@ -65,6 +66,8 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 
 
 var app = builder.Build();
+
+app.ApplyMigrations<AppDbContext>();
 
 app.UseSwagger();
 
