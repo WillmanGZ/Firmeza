@@ -45,3 +45,5 @@ app.UseAuthorization();
 app.MapRazorPages().RequireAuthorization();
 
 app.Run();
+
+public partial class TestHost { }

@@ -16,6 +16,19 @@ services:
     networks:
       - firmeza-network
 
+  # Tests
+    firmeza-tests:
+    build:
+      context: .
+      dockerfile: Firmeza.Tests/Dockerfile
+    container_name: firmeza-tests-container
+    depends_on:
+      - postgres-db
+    networks:
+      - firmeza-network
+    command: ["dotnet", "test", "--logger:trx"]
+
+
   # API
   firmeza-api:
     image: firmeza-api-img
