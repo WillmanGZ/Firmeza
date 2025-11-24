@@ -17,7 +17,7 @@ services:
       - firmeza-network
 
   # Tests
-    firmeza-tests:
+  firmeza-tests:
     build:
       context: .
       dockerfile: Firmeza.Tests/Dockerfile
