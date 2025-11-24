@@ -59,9 +59,9 @@ The **recommended and easiest way** to run this project is using Docker Compose.
 
 Once Docker Compose is running, access the services at:
 
-- **Admin Manager Web** - `http://localhost:<admin-port>`
-- **Client Web** - `http://localhost:<client-port>`
-- **API** - `http://localhost:<api-port>`
+- **Admin Manager Web** - `http://localhost:5041`
+- **Client Web** - `http://localhost:5173`
+- **API** - `http://localhost:5152`
 
 *Note: Replace `<port>` with the actual ports configured in `docker-compose.yml`*
 
@@ -118,10 +118,13 @@ Using Docker Compose for this project provides:
 3. Run tests to ensure everything works
 4. Submit a pull request
 
-## License
-
-[Add your license information here]
 
 ## Support
 
 For issues or questions, please open an issue in the repository.
+
+
+## Links
+Repo: https://github.com/WillmanGZ/Firmeza
+Willman Alfredo Giraldo Zambrano
+Clan Caiman
